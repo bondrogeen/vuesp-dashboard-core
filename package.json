@@ -1,0 +1,44 @@
+{
+  "name": "vuesp-dashboard-core",
+  "version": "0.1.0",
+  "description": "Framework-agnostic dashboard resolution and command building for Vuesp UI and hub",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "check": "npm run build && node --test test/*.test.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "vuesp",
+    "dashboard",
+    "esp",
+    "iot"
+  ],
+  "author": {
+    "name": "Roman Bondarev",
+    "email": "bondrogeen@users.noreply.github.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "~5.7.2"
+  }
+}
