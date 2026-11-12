@@ -1,10 +1,4 @@
-export type DashboardEvaluator = (
-  body: string,
-  v: unknown,
-  a: unknown,
-  b: unknown,
-  c: unknown,
-) => unknown;
+export type DashboardEvaluator = (body: string, scope: Record<string, unknown>) => unknown;
 
 export interface DashboardListItem {
   name: string;

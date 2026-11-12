@@ -23,7 +23,7 @@ const item = {
   type: 'button',
   args: ['ports.12.value', 'ports.12'],
   getTo: "v ? 'ON' : 'OFF'",
-  set: '({ ...a, value: v, command: 2 })',
+  set: '({ ...b, value: v, command: 2 })',
 };
 
 const state = {
@@ -33,7 +33,7 @@ const state = {
 };
 
 // The core never executes dashboard expressions itself.
-const evaluate = (body, v, a, b, c) => new Function('v', 'a', 'b', 'c', body)(v, a, b, c);
+const evaluate = (body, scope) => new Function(...Object.keys(scope), body)(...Object.values(scope));
 
 const resolved = resolveDashboardItem(item, state, evaluate);
 // { ...item, value: 1, valueTo: 'ON', entityType: 'switch' }
@@ -42,7 +42,13 @@ const command = buildDashboardCommands(item, 0, state, evaluate);
 // { key: 9, gpio: 12, value: 0, mode: 1, command: 2 }
 ```
 
-`evaluate` receives the normalized function body and the current `v`, `a`, `b`, `c` values. A body without `return` is treated as an expression.
+`evaluate` receives the normalized function body and a scope object. A body without `return` is treated as an expression.
+
+Scopes:
+
+- `get`: `{ a, b, c, d }` — the selected data arguments;
+- `getTo`: `{ v, a, b, c, d }` — `v` is the result of `get`, then the same arguments;
+- `set`: `{ v, a, b, c, d }` — `v` is the new value, then the same arguments.
 
 ## Security
 

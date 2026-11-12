@@ -28,14 +28,18 @@ export const normalizeFunctionBody = (body: string | undefined): string | null =
 const evaluateBody = (
   body: string | undefined,
   evaluate: DashboardEvaluator,
-  v: unknown,
-  a: unknown,
-  b: unknown,
-  c: unknown,
+  scope: Record<string, unknown>,
 ): unknown => {
   const normalized = normalizeFunctionBody(body);
-  return normalized ? evaluate(normalized, v, a, b, c) : undefined;
+  return normalized ? evaluate(normalized, scope) : undefined;
 };
+
+const metricScope = (args: unknown[]): Record<string, unknown> => ({
+  a: args[0],
+  b: args[1],
+  c: args[2],
+  d: args[3],
+});
 
 export const resolveDashboardItem = (
   item: DashboardItem,
@@ -43,10 +47,11 @@ export const resolveDashboardItem = (
   evaluate: DashboardEvaluator,
 ): ResolvedDashboardItem => {
   const args = getParamsData(item, state);
+  const scope = metricScope(args);
   const raw = args[0] ?? '';
 
-  const value = item.get ? evaluateBody(item.get, evaluate, raw, args[1], args[2], args[3]) : raw;
-  const valueTo = item.getTo ? evaluateBody(item.getTo, evaluate, value, args[1], args[2], args[3]) : value;
+  const value = item.get ? evaluateBody(item.get, evaluate, scope) : raw;
+  const valueTo = item.getTo ? evaluateBody(item.getTo, evaluate, { v: value, ...scope }) : value;
 
   return {
     ...item,
@@ -65,7 +70,8 @@ export const buildDashboardCommands = (
   if (!item.set) return null;
 
   const args = getParamsData(item, state);
-  return evaluateBody(item.set, evaluate, newValue, args[1], args[2], args[3]);
+
+  return evaluateBody(item.set, evaluate, { v: newValue, ...metricScope(args) });
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

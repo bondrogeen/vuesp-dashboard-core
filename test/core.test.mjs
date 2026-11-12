@@ -10,7 +10,7 @@ import {
   resolveDashboardItem,
 } from '../dist/index.js';
 
-const evaluator = (body, v, a, b, c) => new Function('v', 'a', 'b', 'c', body)(v, a, b, c);
+const evaluator = (body, scope) => new Function(...Object.keys(scope), body)(...Object.values(scope));
 
 const relay = {
   id: 'relay',
@@ -19,7 +19,7 @@ const relay = {
   entityType: 'switch',
   args: ['ports.12.value', 'ports.12'],
   getTo: "v ? 'ON' : 'OFF'",
-  set: '({ ...a, value: v, command: 2 })',
+  set: '({ ...b, value: v, command: 2 })',
 };
 
 const state = {
@@ -49,13 +49,27 @@ test('resolveDashboardItem supports get before getTo', () => {
     name: 'Temperature',
     type: 'info',
     args: ['ports.17.value'],
-    get: 'v / 10',
+    get: 'a / 10',
     getTo: '`${v} C`',
   };
   const result = resolveDashboardItem(item, state, evaluator);
   assert.equal(result.value, 2.3);
   assert.equal(result.valueTo, '2.3 C');
   assert.equal(result.entityType, 'sensor');
+});
+
+test('resolveDashboardItem passes a-d to get and v+a-d to getTo', () => {
+  const item = {
+    id: 'sum',
+    name: 'Sum',
+    type: 'info',
+    args: ['ports.12.value', 'ports.17.value'],
+    get: 'a + b',
+    getTo: '`${v} (${a}+${b})`',
+  };
+  const result = resolveDashboardItem(item, state, evaluator);
+  assert.equal(result.value, 24);
+  assert.equal(result.valueTo, '24 (1+23)');
 });
 
 test('buildDashboardCommands returns a device command', () => {
