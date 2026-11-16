@@ -1,26 +1,26 @@
-export type DashboardEvaluator = (body: string, scope: Record<string, unknown>) => unknown;
+export type TDashboardEvaluator = (body: string, scope: Record<string, unknown>) => unknown;
 
-export interface DashboardListItem {
+export interface IDashboardListItem {
   name: string;
   value: string;
 }
 
-export interface DashboardItemOptions {
+export interface IDashboardItemOptions {
   disabled?: number;
   min?: number;
   max?: number;
   step?: number;
-  items?: DashboardListItem[];
+  items?: IDashboardListItem[];
   unit?: string;
 }
 
-export interface DashboardItem {
+export interface IDashboardItem {
   id: string;
   name: string;
   type: string;
   entityType?: string;
   icon?: string;
-  opts?: DashboardItemOptions;
+  opts?: IDashboardItemOptions;
   args: string[];
   get?: string;
   getTo?: string;
@@ -28,15 +28,15 @@ export interface DashboardItem {
   meta?: Record<string, unknown>;
 }
 
-export interface ResolvedDashboardItem extends DashboardItem {
+export interface IResolvedDashboardItem extends IDashboardItem {
   value: unknown;
   valueTo: unknown;
   entityType: string;
 }
 
-export interface DeviceCommand {
+export interface IDeviceCommand {
   key: string | number;
   object: Record<string, unknown>;
 }
 
-export type DashboardCommandResult = DeviceCommand | DeviceCommand[] | null;
+export type TDashboardCommandResult = IDeviceCommand | IDeviceCommand[] | null;

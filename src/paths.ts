@@ -1,4 +1,4 @@
-import type { DashboardItem } from './types.js';
+import type { IDashboardItem } from './types.js';
 
 const BLOCKED_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 
@@ -20,5 +20,5 @@ export const getDataValue = (path: string, state: unknown): unknown => {
   return current;
 };
 
-export const getParamsData = (item: DashboardItem, state: unknown): unknown[] =>
+export const getParamsData = (item: IDashboardItem, state: unknown): unknown[] =>
   item.args.map((path) => getDataValue(path, state));

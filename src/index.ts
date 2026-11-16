@@ -11,11 +11,11 @@ export {
 export { getDataValue, getParamsData } from './paths.js';
 
 export type {
-  DashboardCommandResult,
-  DashboardEvaluator,
-  DashboardItem,
-  DashboardItemOptions,
-  DashboardListItem,
-  DeviceCommand,
-  ResolvedDashboardItem,
+  TDashboardCommandResult,
+  TDashboardEvaluator,
+  IDashboardItem,
+  IDashboardItemOptions,
+  IDashboardListItem,
+  IDeviceCommand,
+  IResolvedDashboardItem,
 } from './types.js';
