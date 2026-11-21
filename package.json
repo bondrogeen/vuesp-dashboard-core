@@ -1,6 +1,6 @@
 {
   "name": "vuesp-dashboard-core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Framework-agnostic dashboard resolution and command building for Vuesp UI and hub",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,6 +39,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@vue/reactivity": "^3.5.46",
     "typescript": "~5.7.2"
   }
 }

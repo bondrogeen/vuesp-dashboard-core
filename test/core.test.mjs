@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+import { computed, reactive } from '@vue/reactivity';
+
 import {
   buildDashboardCommands,
   deriveEntityType,
@@ -34,6 +36,34 @@ test('getDataValue reads own paths and rejects prototypes', () => {
   assert.equal(getDataValue('ports.404.value', state), undefined);
   assert.equal(getDataValue('__proto__.polluted', state), undefined);
   assert.equal(getDataValue('constructor.name', state), undefined);
+});
+
+test('getDataValue stays reactive when a key appears later', () => {
+  const live = reactive({ ports: {} });
+  const value = computed(() => getDataValue('ports.12.value', live));
+
+  assert.equal(value.value, undefined);
+
+  live.ports[12] = { value: 1 };
+  assert.equal(value.value, 1);
+
+  live.ports[12].value = 0;
+  assert.equal(value.value, 0);
+});
+
+test('resolveDashboardItem updates when a missing port arrives', () => {
+  const live = reactive({ ports: {} });
+  const result = computed(() => resolveDashboardItem(relay, live, evaluator));
+
+  assert.equal(result.value.value, '');
+
+  live.ports[12] = { key: 9, gpio: 12, value: 1, mode: 1 };
+  assert.equal(result.value.value, 1);
+  assert.equal(result.value.valueTo, 'ON');
+
+  live.ports[12].value = 0;
+  assert.equal(result.value.value, 0);
+  assert.equal(result.value.valueTo, 'OFF');
 });
 
 test('resolveDashboardItem resolves args, getTo and entity type', () => {
